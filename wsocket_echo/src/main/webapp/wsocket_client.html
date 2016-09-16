@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Websocket sample</title>
+    <link rel="stylesheet"
+          href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link href="css/starter-template.css" rel="stylesheet">
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span> <span
+                    class="icon-bar"></span> <span class="icon-bar"></span> <span
+                    class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.xmeter.net">XMeter -
+                性能测试服务</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse"></div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="col-lg-6">
+        <h2>WebSocket 调用例子</h2>
+        <div class="input-group">
+            <input id="message" type="text" class="form-control" placeholder="输入发送至服务器的消息">
+				<span class="input-group-btn">
+					<button id="echo" class="btn btn-default" type="button">Go!</button>
+				</span>
+        </div>
+        <hr/>
+        <div id="echo_msg" class="alert alert-success" role="alert"></div>
+    </div>
+</div>
+
+<script>
+    var wsUri = "ws://localhost:8080/wsocket_echo/echo";
+    var websocket = null;
+
+    $("#echo").click( function() {
+        if(websocket == null) {
+            websocket = new WebSocket(wsUri);
+            websocket.onopen = function (evt) {
+                onOpen(this, evt)
+            };
+
+            websocket.onmessage = function(evt) {
+                console.log(evt.data);
+                $("#echo_msg").text("服务器返回：" + evt.data);
+                $("#echo_msg").show();
+            };
+
+            websocket.onerror = function(evt) {
+                onError(evt)
+            };
+        } else {
+        	var message = $("#message").val();
+            if(message == null || message == "") {
+         	   alert("发送消息不能为空");
+         	   return;
+            } 
+            websocket.send(message);
+        }
+        
+    });
+
+    function onOpen(self, evt) {
+       console.log("Connected to Endpoint!");
+       var message = $("#message").val();
+       if(message == null || message == "") {
+    	   alert("发送消息不能为空");
+    	   return;
+       } 
+       websocket.send(message);
+    };
+
+    function onClose(evt) {
+        console.log("socket closed");
+    };
+
+    function onError(evt) {
+        console.log('ERROR: ' + evt.data);
+    };
+</script>
+</body>
+</html>
