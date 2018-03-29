@@ -59,6 +59,8 @@ public class TCPConfigGui extends AbstractConfigGui {
     private JTextField soLinger;
 
     private JTextField eolByte;
+    
+    private JTextField responseLenth;
 
     private JSyntaxTextArea requestData;
 
@@ -95,6 +97,7 @@ public class TCPConfigGui extends AbstractConfigGui {
         closeConnection.setTristateFromProperty(element, TCPSampler.CLOSE_CONNECTION);
         soLinger.setText(element.getPropertyAsString(TCPSampler.SO_LINGER));
         eolByte.setText(element.getPropertyAsString(TCPSampler.EOL_BYTE));
+        responseLenth.setText(element.getPropertyAsString(TCPSampler.LENGTH, ""));
     }
 
     @Override
@@ -124,6 +127,7 @@ public class TCPConfigGui extends AbstractConfigGui {
         closeConnection.setPropertyFromTristate(element, TCPSampler.CLOSE_CONNECTION); // Don't use default for saving tristates
         element.setProperty(TCPSampler.SO_LINGER, soLinger.getText(), "");
         element.setProperty(TCPSampler.EOL_BYTE, eolByte.getText(), "");
+        element.setProperty(TCPSampler.LENGTH, responseLenth.getText(), "");
     }
 
     /**
@@ -141,6 +145,7 @@ public class TCPConfigGui extends AbstractConfigGui {
         closeConnection.setSelected(TCPSampler.CLOSE_CONNECTION_DEFAULT); // TODO should this be indeterminate?
         soLinger.setText(""); //$NON-NLS-1$
         eolByte.setText(""); //$NON-NLS-1$
+        responseLenth.setText("");
     }
 
 
@@ -212,6 +217,19 @@ public class TCPConfigGui extends AbstractConfigGui {
         eolBytePanel.add(eolByte);
         return eolBytePanel;
     }
+    
+    private JPanel createLengthPanel() {
+        JLabel label = new JLabel(JMeterUtils.getResString("response_length")); //$NON-NLS-1$ 
+
+        responseLenth = new JTextField(3); // 3 columns size
+        responseLenth.setMaximumSize(new Dimension(responseLenth.getPreferredSize()));
+        label.setLabelFor(responseLenth);
+
+        JPanel eolBytePanel = new JPanel(new FlowLayout());
+        eolBytePanel.add(label);
+        eolBytePanel.add(responseLenth);
+        return eolBytePanel;
+    }
 
     private JPanel createRequestPanel() {
         JLabel reqLabel = new JLabel(JMeterUtils.getResString("tcp_request_data")); // $NON-NLS-1$
@@ -249,6 +267,7 @@ public class TCPConfigGui extends AbstractConfigGui {
         optionsPanel.add(createNoDelayPanel());
         optionsPanel.add(createSoLingerOption());
         optionsPanel.add(createEolBytePanel());
+        optionsPanel.add(createLengthPanel());
         mainPanel.add(optionsPanel);
         mainPanel.add(createRequestPanel());
 

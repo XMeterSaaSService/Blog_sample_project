@@ -90,6 +90,8 @@ public class TCPSampler extends AbstractSampler implements ThreadListener, Inter
     public static final String SO_LINGER = "TCPSampler.soLinger"; //$NON-NLS-1$
 
     public static final String EOL_BYTE = "TCPSampler.EolByte"; //$NON-NLS-1$
+    
+    public static final String LENGTH = "TCPSampler.length"; //$NON-NLS-1$
 
     private static final String TCPKEY = "TCP"; //$NON-NLS-1$ key for HashMap
 
@@ -335,9 +337,13 @@ public class TCPSampler extends AbstractSampler implements ThreadListener, Inter
         }
         try {
             tcpClient = (TCPClient) javaClass.newInstance();
+            /**The EOL byte setting has higher priority, if both EOL byte & length are set, then EOL byte will be used, and length will be ignored.**/
             if (getPropertyAsString(EOL_BYTE, "").length()>0){
                 tcpClient.setEolByte(getEolByte());
                 log.info("Using eolByte={}", getEolByte());
+            } else if (getPropertyAsString(LENGTH, "").trim().length() > 0) { 
+            	tcpClient.setLength(Integer.parseInt(getPropertyAsString(LENGTH, "").trim()));
+            	log.info("Using length={}", getPropertyAsString(LENGTH, ""));
             }
 
             if (log.isDebugEnabled()) {

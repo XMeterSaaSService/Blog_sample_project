@@ -111,15 +111,23 @@ public class TCPClientImpl extends AbstractTCPClient {
             byte[] buffer = new byte[4096];
             int x;
             boolean first = true;
-            while ((x = is.read(buffer)) > -1) {
-                if (first) {
-                    sampleResult.latencyEnd();
-                    first = false;
-                }
-                w.write(buffer, 0, x);
-                if (useEolByte && (buffer[x - 1] == eolByte)) {
-                    break;
-                }
+            if(getLength() == -1) {
+            	 while ((x = is.read(buffer)) > -1) {
+                     if (first) {
+                         sampleResult.latencyEnd();
+                         first = false;
+                     }
+                     w.write(buffer, 0, x);
+                     if (useEolByte && (buffer[x - 1] == eolByte)) {
+                         break;
+                     }
+                 } 	
+            } else {
+				buffer = new byte[length];
+				if ((x = is.read(buffer, 0, length)) > -1) {
+					sampleResult.latencyEnd();
+					w.write(buffer, 0, x);
+				}
             }
 
             // do we need to close byte array (or flush it?)

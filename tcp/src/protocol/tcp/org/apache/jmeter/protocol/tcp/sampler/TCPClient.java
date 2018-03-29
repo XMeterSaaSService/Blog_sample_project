@@ -107,4 +107,19 @@ public interface TCPClient {
      *            The value to set
      */
     void setEolByte(int eolInt);
+    
+    /**
+     * Get the response length setting
+     * 
+     * @return
+     */
+    int getLength();
+    
+    
+    /**
+     * Set the length of returned response.
+     * 
+     * @param length
+     */
+    void setLength(int length);
 }
